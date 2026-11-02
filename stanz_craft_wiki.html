@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>СтанZ Craft Wiki — вики крафтов сервера СтанZ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Cutive+Mono&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#20180e;--panel:rgba(32,25,15,.82);--panel2:rgba(43,34,20,.9);--line:#6b5a38;--txt:#eadfbd;--dim:#c9b98c;--acc:#d9a24b;--red:#c05a45;--green:#8fae62}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#20180e;color:var(--txt);min-height:100vh;overflow-x:hidden}
+h1,h2,h3,.ttl{font-family:'Oswald','Arial Narrow',Impact,sans-serif;letter-spacing:.06em;text-transform:uppercase}
+.mono,.ctags,.ing,.tools-l,.note{font-family:'Cutive Mono',Consolas,monospace}
+a{color:var(--acc)}
+.hidden{display:none!important}
+/* фон */
+.sky{position:fixed;inset:0;z-index:-5;background:linear-gradient(#7fa5b5 0%,#c8b98a 45%,#e2c489 70%,#caa06a 100%)}
+.sun{position:fixed;top:9%;left:72%;width:120px;height:120px;border-radius:50%;z-index:-4;background:radial-gradient(circle,#fff3cf 0%,#f7d98a 55%,rgba(247,217,138,0) 72%);animation:sunpulse 7s ease-in-out infinite}
+@keyframes sunpulse{0%,100%{transform:scale(1);opacity:.95}50%{transform:scale(1.07);opacity:1}}
+.dunes{position:fixed;left:0;right:0;bottom:0;height:230px;background-repeat:repeat-x;background-size:1200px 220px;z-index:-3;pointer-events:none}
+.d1{background-image:url("__D1__");animation:dune1 95s linear infinite}
+.d2{background-image:url("__D2__");animation:dune2 60s linear infinite}
+@keyframes dune1{from{background-position-x:0}to{background-position-x:-1200px}}
+@keyframes dune2{from{background-position-x:0}to{background-position-x:1200px}}
+.cam{position:fixed;bottom:14px;width:130px;height:92px;z-index:-2;pointer-events:none;opacity:.8;animation-name:walk;animation-timing-function:linear;animation-iteration-count:infinite}
+.cam img{width:100%;height:100%;animation:bob 1.4s ease-in-out infinite alternate}
+.cam.flip{transform:scaleX(-1)}
+@keyframes walk{from{left:-14%}to{left:112%}}
+@keyframes walkrev{from{left:112%}to{left:-14%}}
+@keyframes bob{from{transform:translateY(0) rotate(-1.4deg)}to{transform:translateY(-7px) rotate(1.4deg)}}
+.sand{position:fixed;top:-12px;border-radius:50%;background:#e7cf9a;opacity:.7;z-index:-2;pointer-events:none;animation:fall linear infinite}
+@keyframes fall{from{transform:translate(0,-12px)}to{transform:translate(-160px,108vh)}}
+.tumble{position:fixed;bottom:26px;width:44px;height:44px;z-index:-2;pointer-events:none;background:url("__TUM__") center/contain no-repeat;animation:roll 24s linear infinite}
+@keyframes roll{from{left:-8vw;transform:rotate(0)}to{left:106vw;transform:rotate(1200deg)}}
+.vignette{position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse at center,rgba(32,24,14,0) 55%,rgba(24,17,9,.62) 100%)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+/* шапка */
+header{max-width:1060px;margin:34px auto 8px;padding:30px 30px 24px;background:var(--panel);border:1px solid var(--line);border-radius:14px;position:relative;backdrop-filter:blur(6px);overflow:hidden}
+header:before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--acc),transparent)}
+.over{font-family:'Cutive Mono',monospace;font-size:12px;letter-spacing:.35em;color:var(--dim);text-transform:uppercase}
+h1{font-size:42px;margin:8px 0 10px;color:#f2e7c4;text-shadow:0 2px 0 #14100a,0 4px 14px rgba(0,0,0,.5)}
+h1 .z{color:var(--acc)}
+.desc{color:var(--dim);max-width:640px;font-size:15px;line-height:1.55}
+.badges{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.badge{font-family:'Cutive Mono',monospace;font-size:12px;padding:6px 12px;border:1px solid var(--line);border-radius:20px;background:rgba(20,15,8,.5);color:var(--txt)}
+.badge b{color:var(--acc)}
+/* поиск и вкладки */
+.wrap{max-width:1060px;margin:0 auto;padding:0 16px 40px}
+.tools{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:20px 0 12px}
+#searchIn{flex:1;min-width:220px;padding:11px 14px;border:1px solid var(--line);border-radius:9px;background:var(--panel);color:var(--txt);font-size:15px;outline:none}
+#searchIn:focus{border-color:var(--acc)}
+#tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.tab{padding:8px 14px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--dim);cursor:pointer;font-family:'Oswald',sans-serif;letter-spacing:.05em;text-transform:uppercase;font-size:13px}
+.tab:hover{border-color:var(--acc)}
+.tab.on{background:var(--acc);color:#241a0d;border-color:var(--acc);font-weight:600}
+/* сетка */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:14px}
+.card{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform .15s,border-color .15s}
+.card:hover{transform:translateY(-3px);border-color:var(--acc)}
+.cimg{height:118px;background-position:center;background-size:contain;background-repeat:no-repeat;background-color:rgba(20,15,8,.45);border-bottom:1px solid var(--line)}
+.cbody{padding:10px 12px 12px}
+.cbody h3{font-size:15px;color:#f2e7c4;margin-bottom:4px}
+.ccat{font-size:11px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase}
+.ctags{margin-top:7px;display:flex;gap:6px;flex-wrap:wrap}
+.tag{font-size:10px;padding:2px 8px;border-radius:10px;border:1px solid var(--line)}
+.tag.mod{color:var(--acc);border-color:var(--acc)}
+.tag.ed{color:#8fae62;border-color:#5c7a3a}
+.mini{position:absolute;top:8px;right:8px;padding:4px 7px;border-radius:7px;border:1px solid var(--line);background:rgba(20,15,8,.75);color:var(--txt);cursor:pointer;font-size:13px}
+.mini:hover{border-color:var(--acc)}
+body.adm .adm-only{display:inline-block}
+.adm-only{display:none}
+.empty{padding:40px;text-align:center;color:var(--dim)}
+/* панели */
+section#admin{margin-top:30px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px}
+#admin h2{font-size:20px;color:#f2e7c4;margin-bottom:10px}
+#admin .hint{color:var(--dim);font-size:13px;margin-bottom:12px}
+.pwrow{display:flex;gap:10px;align-items:center}
+#pwIn{padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:#181209;color:var(--txt);width:200px}
+.btn{padding:10px 16px;border:1px solid var(--line);border-radius:8px;background:#2e2415;color:var(--txt);cursor:pointer;font-size:14px}
+.btn:hover{border-color:var(--acc);color:#fff}
+.btn.acc{background:var(--acc);color:#241a0d;font-weight:600;border-color:var(--acc)}
+.btn.danger{background:transparent;border-color:var(--red);color:#e0937f}
+.btn.danger:hover{background:var(--red);color:#fff}
+.apanel{margin-top:14px;border-top:1px dashed var(--line);padding-top:14px}
+.apanel h3{font-size:15px;color:#f2e7c4;margin-bottom:8px}
+textarea,input[type=text]{padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:#181209;color:var(--txt);font-family:'Cutive Mono',monospace;font-size:13px;width:100%}
+textarea{min-height:80px;resize:vertical}
+select{padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:#181209;color:var(--txt)}
+.howto{color:var(--dim);font-size:12px;margin:6px 0}
+.rowbtns{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+#status{margin-top:8px;font-family:'Cutive Mono',monospace;font-size:12px;color:var(--green)}
+/* модалки */
+.modal{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;background:rgba(15,11,6,.72);padding:16px}
+.mbox{background:var(--panel2);border:1px solid var(--acc);border-radius:14px;max-width:620px;width:100%;max-height:86vh;overflow:auto;padding:22px;backdrop-filter:blur(8px)}
+.mbox h2{font-size:22px;color:#f2e7c4;margin-bottom:4px}
+.mclose{position:absolute;top:10px;right:12px;background:none;border:none;color:var(--dim);font-size:20px;cursor:pointer}
+.mbox{position:relative}
+.mimg{width:100%;height:220px;background-size:contain;background-position:center;background-repeat:no-repeat;margin:12px 0;border:1px solid var(--line);border-radius:10px;background-color:rgba(20,15,8,.5)}
+.ml{font-family:'Cutive Mono',monospace;font-size:12px;color:var(--dim);letter-spacing:.2em;text-transform:uppercase;margin:12px 0 6px}
+.ing{display:block;padding:5px 8px;border:1px solid rgba(107,90,56,.5);border-radius:7px;margin-bottom:5px;font-size:13px;color:var(--txt);position:relative;background:rgba(20,15,8,.35)}
+.ing img{width:22px;height:22px;vertical-align:-6px;margin-right:8px}
+.ing .ip{position:absolute;right:6px;top:6px;border:none;background:none;cursor:pointer;font-size:14px}
+.tools-l{font-size:13px;color:var(--dim)}
+.note{margin-top:10px;padding:10px;border-left:3px solid var(--acc);background:rgba(217,162,75,.08);font-size:13px}
+#phIn{margin-top:8px}
+#phPrev{width:100%;height:150px;background-size:contain;background-position:center;background-repeat:no-repeat;border:1px dashed var(--line);border-radius:8px;margin-top:10px}
+#phStatus{margin-top:6px;font-family:'Cutive Mono',monospace;font-size:12px}
+.ok{color:var(--green)} .bad{color:#e0937f}
+/* ошибки и футер */
+#errBar{position:fixed;top:0;left:0;right:0;z-index:99;background:var(--red);color:#fff;padding:10px 16px;font-family:'Cutive Mono',monospace;font-size:13px}
+footer{max-width:1060px;margin:34px auto 26px;padding:0 16px}
+.fbar{position:relative;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:16px 20px;background:linear-gradient(180deg,var(--panel),rgba(24,18,11,.9));border:1px solid rgba(107,90,56,.55);border-radius:14px;box-shadow:0 12px 30px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.05);backdrop-filter:blur(5px)}
+.fbar:before{content:'';position:absolute;top:0;left:10%;right:10%;height:2px;background:linear-gradient(90deg,transparent,var(--acc),transparent)}
+.fbrand{display:flex;align-items:center;gap:13px}
+.femblem{width:44px;height:44px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;font-family:'Oswald','Arial Narrow',Impact,sans-serif;font-size:17px;font-weight:700;letter-spacing:.06em;color:var(--acc);border:1.5px solid var(--acc);border-radius:10px;background:rgba(217,162,75,.07);box-shadow:inset 0 0 0 3px rgba(217,162,75,.1)}
+.fname{font-family:'Oswald','Arial Narrow',Impact,sans-serif;font-size:15px;font-weight:700;letter-spacing:.14em;color:var(--txt);text-transform:uppercase}
+.fname .z{color:var(--acc)}
+.fsub{font-family:'Cutive Mono',Consolas,monospace;font-size:11.5px;color:var(--dim);margin-top:3px;letter-spacing:.03em}
+.fmeta{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-family:'Cutive Mono',Consolas,monospace;font-size:12px}
+.fchip{color:var(--txt);padding:4px 11px;border:1px solid rgba(217,162,75,.45);border-radius:999px;background:rgba(217,162,75,.1)}
+.fchip.ghost{color:var(--dim);border-color:rgba(107,90,56,.5);background:rgba(0,0,0,.15)}
+.fdiv{width:1px;height:30px;background:linear-gradient(180deg,transparent,rgba(217,162,75,.55),transparent)}
+.fwho{color:var(--dim)} .fwho b{color:var(--txt);font-weight:800}
+@media (max-width:640px){.fbar{flex-direction:column;align-items:flex-start}}
+details{margin-top:22px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px}
+details summary{cursor:pointer;color:var(--acc);font-family:'Oswald',sans-serif;letter-spacing:.06em;text-transform:uppercase}
+details p{font-size:13px;color:var(--dim);margin-top:10px;line-height:1.6}
+</style>
+</head>
+<body>
+<div id="errBar" class="hidden"></div>
+<div class="sky"></div><div class="sun"></div>
+<div class="dunes d1"></div><div class="dunes d2"></div>
+<div class="tumble"></div>
+<div id="camelLayer"></div><div id="sandLayer"></div>
+<div class="vignette"></div>
+<header>
+  <div class="over">вики крафтов сервера СтанZ · <span id="verTop"></span></div>
+  <h1>СТАНZ <span class="z">CRAFT</span> WIKI</h1>
+  <p class="desc">Выживание по-взрослому: рецепты крафта для вашего сервера — оружие, укрытия, медицина и всё, что можно собрать своими руками в пыли Чернарозда.</p>
+  <div class="badges">
+    <span class="badge">🧭 Рецептов: <b id="cnt">…</b></span>
+    <span class="badge">📷 фото от админа</span>
+    <span class="badge">✏️ редактирование рецептов</span>
+  </div>
+</header>
+<div class="wrap">
+  <div class="tools"><input id="searchIn" type="text" placeholder="Поиск: название, ингредиенты, инструменты, описание…"></div>
+  <div id="tabs"></div>
+  <div id="grid" class="grid"></div>
+  <div id="empty" class="empty hidden">Ничего не найдено — попробуйте другой запрос.</div>
+  <section id="admin">
+    <h2>🛡️ Панель админа</h2>
+    <div id="loginBox">
+      <p class="hint">Введите пароль, чтобы добавлять, редактировать и удалять рецепты, привязывать фото (к рецептам и каждому ингредиенту).</p>
+      <div class="pwrow"><input id="pwIn" type="password" placeholder="Пароль"><button class="btn acc" data-act="login">Войти</button></div>
+    </div>
+    <div id="admPanels" class="hidden">
+      <p class="hint" id="admHello">Вы вошли как администратор.</p>
+      <div class="apanel">
+        <h3>➕ Добавить рецепт из мода</h3>
+        <input id="nmIn" type="text" placeholder="Название рецепта">
+        <div class="howto">Категория: <select id="catSel"></select></div>
+        <textarea id="ingTa" placeholder="Ингредиенты — по одному в строке, можно «Название x 3»"></textarea>
+        <input id="toolsIn" type="text" placeholder="Инструменты (через запятую)">
+        <textarea id="noteTa" placeholder="Описание / примечание"></textarea>
+        <div class="rowbtns"><button class="btn acc" data-act="addsave">Добавить рецепт</button><button class="btn danger" data-act="dellast">🗑 Удалить последний мод-рецепт</button><button class="btn" data-act="logout">Выйти из админа</button></div>
+      </div>
+      <div class="apanel">
+        <h3>📷 Массовая привязка фото (рецепты)</h3>
+        <p class="howto">По одной на строку: Название рецепта = прямая ссылка на файл картинки (.jpg/.png/.webp). Правый клик по картинке → «Копировать URL изображения».</p>
+        <textarea id="massTa"></textarea>
+        <div class="rowbtns"><button class="btn acc" data-act="apply">Применить</button><button class="btn" data-act="checkphotos">Проверить все свои фото</button><button class="btn danger" data-act="clearphotos">Убрать все свои фото</button></div>
+        <div id="status"></div>
+      </div>
+      <div class="apanel">
+        <h3>💾 Резервная копия</h3>
+        <div class="rowbtns"><button class="btn" data-act="export">Экспорт в JSON</button><button class="btn" data-act="import">Импорт</button><input id="fileImp" type="file" accept=".json" class="hidden"></div>
+      </div>
+    </div>
+  </section>
+  <details>
+    <summary>📖 Справка и история версий</summary>
+    <p>СтанZ Craft Wiki — вики крафтов для сервера СтанZ. Поиск ищет по названию, ингредиентам, инструментам и описаниям. Клик по карточке открывает крупное фото и полный список ингредиентов.</p>
+    <p>v3.6.0 — подвал переделан в «вывеску»: эмблема SZ, чипы версии и даты релиза, тёмная панель с янтарной линией — в одном стиле с шапкой.</p>
+    <p>v3.5.0 — верблюд с фото вшит на фон картинкой: вырезан с белого фона, приглушён под пустыню, разворачивается по направлению ходьбы, походка плавнее.</p>
+    <p>v3.3.0 — исправлен краш «VER is not defined»: константа объявлена первой строкой скрипта, порядок инициализации выверен и проверен автоматически.</p>
+    <p>v3.2.0 — типографика в стиле DayZ, мягкая палитра, новая шапка. v3.1.0 — защита от нулевых элементов; зомби заменены верблюдами. v3.0.x — пустынная тема. v2.9.0 — редактирование и удаление любых рецептов админом.</p>
+    <p>Свои фото хранятся в браузере и работают даже офлайн. Экспорт/импорт переносит рецепты, правки и все фото.</p>
+  </details>
+</div>
+<footer>
+  <div class="fbar">
+    <div class="fbrand">
+      <div class="femblem">SZ</div>
+      <div class="fmain">
+        <div class="fname">СТАНZ <span class="z">CRAFT</span> WIKI</div>
+        <div class="fsub">вики крафтов сервера СтанZ · пустынная тема</div>
+      </div>
+    </div>
+    <div class="fmeta">
+      <span class="fchip"><span id="verFoot"></span></span>
+      <span class="fchip ghost">релиз 01.11.2026</span>
+      <span class="fdiv"></span>
+      <span class="fwho">автор: <b>pit0797</b></span>
+    </div>
+  </div>
+</footer>
+
+<div id="mModal" class="modal hidden"><div class="mbox">
+  <button class="mclose" data-act="closemodal">✕</button>
+  <h2 id="mTitle"></h2><div class="ccat mono" id="mCat"></div>
+  <div class="mimg" id="mImg"></div>
+  <div class="ml">Ингредиенты</div><div id="mIng"></div>
+  <div class="ml">Инструменты</div><div class="tools-l mono" id="mTools"></div>
+  <div class="note mono" id="mNote"></div>
+  <div class="rowbtns">
+    <button class="btn adm-only" data-act="photorec">📷 Фото рецепта</button>
+    <button class="btn adm-only" data-act="editrec">✏️ Изменить рецепт</button>
+    <button class="btn danger adm-only" data-act="delrec">🗑 Удалить</button>
+  </div>
+</div></div>
+
+<div id="pModal" class="modal hidden"><div class="mbox">
+  <button class="mclose" data-act="closemodal">✕</button>
+  <h2>Привязка фото</h2>
+  <div class="mono" id="phWho" style="color:var(--acc);font-size:13px"></div>
+  <input id="phIn" type="text" placeholder="Прямая ссылка на картинку (.jpg/.png/.webp)">
+  <div id="phPrev"></div><div id="phStatus"></div>
+  <p class="howto">Ссылка должна быть прямой на файл картинки — правый клик по картинке → «Копировать URL изображения». Либо выберите файл с компьютера — он вшивается в страницу и работает даже офлайн.</p>
+  <div class="rowbtns">
+    <button class="btn" data-act="checklink">Проверить ссылку</button>
+    <button class="btn acc" data-act="bind">Закрепить</button>
+    <button class="btn danger" data-act="unbind">✕ Убрать</button>
+    <button class="btn" data-act="pickfile">📷 Файл с компьютера</button>
+    <button class="btn" data-act="closemodal">Отмена</button>
+  </div>
+</div></div>
+
+<div id="eModal" class="modal hidden"><div class="mbox">
+  <button class="mclose" data-act="closemodal">✕</button>
+  <h2>Редактирование рецепта</h2>
+  <input id="eName" type="text" placeholder="Название">
+  <div class="howto">Категория: <select id="eCat"></select></div>
+  <textarea id="eIng" placeholder="Ингредиенты построчно, можно «Название x 3»"></textarea>
+  <input id="eTools" type="text" placeholder="Инструменты через запятую">
+  <textarea id="eNote" placeholder="Описание / примечание"></textarea>
+  <div class="rowbtns"><button class="btn acc" data-act="saveedit">Сохранить</button><button class="btn" data-act="closemodal">Отмена</button></div>
+</div></div>
+
+<input id="filePick" type="file" accept="image/*" class="hidden">
+<script>
+const VER='v3.6.0';
+const RECIPES=[{"n": "Обрез Мосина", "c": "Оружие", "i": ["Винтовка Мосина x1", "Пила x1"], "t": ["Пила"], "note": "Спилить приклад и часть ствола."}, {"n": "Обрез IZH-43", "c": "Оружие", "i": ["Двустволка IZH-43 x1", "Пила x1"], "t": ["Пила"], "note": "Спилить приклад дробовика."}, {"n": "Импровизированный лук", "c": "Оружие", "i": ["Длинная деревянная палка x1", "Верёвка x1", "Нож x1"], "t": ["Нож"], "note": "Тетива из верёвки."}, {"n": "Стрелы (3 шт)", "c": "Оружие", "i": ["Длинные деревянные палки x3", "Перья x3", "Нож x1"], "t": ["Нож"], "note": "Перья из любой птицы."}, {"n": "Колчан", "c": "Оружие", "i": ["Шкура x1", "Верёвка x1", "Нож x1"], "t": ["Нож"], "note": "Хранит до 6 стрел."}, {"n": "Самодельный нож", "c": "Оружие", "i": ["Камень x1", "Палка x1", "Верёвка x1"], "t": [], "note": "Скам: камень + палка + верёвка."}, {"n": "Копьё", "c": "Оружие", "i": ["Длинная деревянная палка x1", "Нож x1", "Верёвка x1"], "t": ["Нож"], "note": "Нож привязан к палке."}, {"n": "Каменный топор", "c": "Оружие", "i": ["Камень x1", "Палка x1", "Верёвка x1"], "t": [], "note": "Базовый инструмент выживания."}, {"n": "Импровизированная удочка", "c": "Инструменты", "i": ["Длинная деревянная палка x1", "Верёвка x1", "Крючок x1", "Червяк x1"], "t": [], "note": "Червяк — насадка."}, {"n": "Крючок из проволоки", "c": "Инструменты", "i": ["Проволока x1", "Плоскогубцы x1"], "t": ["Плоскогубцы"], "note": "Один крючок на удочку."}, {"n": "Импровизированный компас", "c": "Инструменты", "i": ["Игла x1", "Магнит x1", "Пробка от бутылки x1", "Крышка от банки x1", "Вода x1"], "t": [], "note": "Игла намагничивается о магнит."}, {"n": "Силок", "c": "Инструменты", "i": ["Палка x1", "Верёвка x1"], "t": [], "note": "Ловит кролика. Установить на земле."}, {"n": "Костяной нож", "c": "Инструменты", "i": ["Кость x1", "Камень x1", "Верёвка x1"], "t": [], "note": "Прочный альтернативный нож."}, {"n": "Открытая консерва (топором)", "c": "Еда и напитки", "i": ["Консерва x1", "Топор x1"], "t": ["Топор"], "note": "Часть содержимого теряется."}, {"n": "Открытая консерва (ножом)", "c": "Еда и напитки", "i": ["Консерва x1", "Нож x1"], "t": ["Нож"], "note": "Нож тупится быстрее."}, {"n": "Нарезанное сырое мясо", "c": "Еда и напитки", "i": ["Сырое мясо x1", "Нож x1"], "t": ["Нож"], "note": "Порции для готовки."}, {"n": "Шашлык на палке", "c": "Еда и напитки", "i": ["Длинная деревянная палка x1", "Сырое мясо x1"], "t": [], "note": "Жарить над костром."}, {"n": "Печёный картофель", "c": "Еда и напитки", "i": ["Картофель x1"], "t": [], "note": "Запечь в костре или углях."}, {"n": "Бутылка воды из колодца", "c": "Еда и напитки", "i": ["Пустая бутылка x1"], "t": [], "note": "Наполнить у колодца."}, {"n": "Кипячёная вода", "c": "Еда и напитки", "i": ["Бутылка с водой x1", "Кастрюля x1"], "t": ["Кастрюля"], "note": "Кипятить у костра — безопасно пить."}, {"n": "Тесто", "c": "Еда и напитки", "i": ["Мука x1", "Вода x1", "Соль x1"], "t": [], "note": "Основа для выпечки."}, {"n": "Дезинфицированные тряпки", "c": "Медицина", "i": ["Тряпки x1", "Спирт x1"], "t": [], "note": "Обработка ран."}, {"n": "Самодельная повязка", "c": "Медицина", "i": ["Тряпки x1"], "t": [], "note": "Останавливает кровь."}, {"n": "Шина", "c": "Медицина", "i": ["Палка x2", "Тряпки x1"], "t": [], "note": "При переломе."}, {"n": "Пластырь из скотча", "c": "Медицина", "i": ["Скотч x1"], "t": [], "note": "Скотч + тряпки в оригинале."}, {"n": "Жгут", "c": "Медицина", "i": ["Тряпки x1", "Палка x1"], "t": [], "note": "Остановка сильного кровотечения."}, {"n": "Рюкзак из мешковины", "c": "Одежда и защита", "i": ["Мешковина x3", "Верёвка x1"], "t": [], "note": "Позже: сухой мешок."}, {"n": "Рюкзак из шкуры", "c": "Одежда и защита", "i": ["Шкура x2", "Верёвка x1", "Нож x1"], "t": ["Нож"], "note": "Больше слотов, чем у мешковинного."}, {"n": "Гетры из шкуры", "c": "Одежда и защита", "i": ["Шкура x1", "Нож x1", "Верёвка x1"], "t": ["Нож"], "note": "Защита ног от холода."}, {"n": "Куртка из мешковины", "c": "Одежда и защита", "i": ["Мешковина x2", "Верёвка x1", "Нож x1"], "t": ["Нож"], "note": "Маскировка в кустах."}, {"n": "Самодельная маска", "c": "Одежда и защита", "i": ["Шкура x1", "Верёвка x1", "Нож x1"], "t": ["Нож"], "note": "Скрывает лицо."}, {"n": "Перчатки из шкуры", "c": "Одежда и защита", "i": ["Шкура x1", "Нож x1"], "t": ["Нож"], "note": "Тепло рукам."}, {"n": "Кострище", "c": "Огонь и свет", "i": ["Брёвна x2", "Тряпки x1", "Спички x1"], "t": [], "note": "Не разжигать под навесом."}, {"n": "Факел", "c": "Огонь и свет", "i": ["Длинная деревянная палка x1", "Тряпки x1"], "t": [], "note": "Поджечь у костра."}, {"n": "Камин из поленьев", "c": "Огонь и свет", "i": ["Брёвна x5", "Топор x1"], "t": ["Топор"], "note": "Для обогрева укрытия."}, {"n": "Тренога", "c": "Огонь и свет", "i": ["Длинные деревянные палки x3", "Верёвка x1"], "t": [], "note": "Подвеска котелка над огнём."}, {"n": "Верёвка из тряпок", "c": "Материалы", "i": ["Тряпки x2"], "t": [], "note": "Несколько тряпок = 1 верёвка."}, {"n": "Тряпки из одежды", "c": "Материалы", "i": ["Любая одежда x1", "Нож x1"], "t": ["Нож"], "note": "Разрезать одежду."}, {"n": "Доски", "c": "Материалы", "i": ["Бревно x1", "Топор x1"], "t": ["Топор"], "note": "Расколоть бревно."}, {"n": "Палки", "c": "Материалы", "i": ["Кустарник x1"], "t": [], "note": "Хворост даёт палки."}, {"n": "Мешковина из мешка", "c": "Материалы", "i": ["Мешок x1", "Нож x1"], "t": ["Нож"], "note": "Разрезать мешок."}, {"n": "Шалаш", "c": "Укрытия и базы", "i": ["Палки x4", "Брезент x1", "Верёвка x1"], "t": [], "note": "Временное укрытие."}, {"n": "Навес из брезента", "c": "Укрытия и базы", "i": ["Брезент x1", "Верёвка x1", "Палки x2"], "t": [], "note": "Защита от дождя."}, {"n": "Ящик под снаряжение", "c": "Укрытия и базы", "i": ["Доски x4", "Гвозди x2", "Молоток x1"], "t": ["Молоток"], "note": "Хранение до 50 слотов."}, {"n": "Огородный ящик", "c": "Укрытия и базы", "i": ["Доски x2", "Гвозди x2", "Молоток x1"], "t": ["Молоток"], "note": "Грядка для растений."}, {"n": "Колышки", "c": "Укрытия и базы", "i": ["Палки x3", "Нож x1"], "t": ["Нож"], "note": "Основа шалаша и навеса."}, {"n": "Импровизированный мешок", "c": "Прочее", "i": ["Мешковина x2", "Верёвка x1", "Нож x1"], "t": ["Нож"], "note": "Мешок из мешковины."}, {"n": "Импровизированная могила", "c": "Прочее", "i": ["Лопата x1"], "t": ["Лопата"], "note": "Закопать тело."}, {"n": "Плед из шкур", "c": "Прочее", "i": ["Шкура x3", "Верёвка x1"], "t": [], "note": "Сон и тепло."}, {"n": "Табличка с надписью", "c": "Прочее", "i": ["Доска x1", "Гвозди x2", "Молоток x1"], "t": ["Молоток"], "note": "Надпись при осмотре."}];
+const ICONS={"Бревно": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Crect x=%228%22 y=%2220%22 width=%2232%22 height=%229%22 rx=%222%22 fill=%22%238f7a55%22/%3E%3Crect x=%228%22 y=%2230%22 width=%2232%22 height=%225%22 rx=%222%22 fill=%22%238f7a55%22 opacity=%220.6%22/%3E%3C/svg%3E", "Брезент": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M24 10 L40 38 L8 38 Z%22 fill=%22none%22 stroke=%22%23a9834f%22 stroke-width=%225%22/%3E%3Cpath d=%22M24 10 L24 38%22 stroke=%22%23a9834f%22 stroke-width=%223%22/%3E%3C/svg%3E", "Брёвна": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M24 8 Q32 18 30 26 Q34 24 34 30 Q34 38 24 40 Q14 38 14 30 Q14 22 20 18 Q18 26 22 26 Q22 16 24 8 Z%22 fill=%22%23d97a3f%22/%3E%3C/svg%3E", "Бутылка воды из колодца": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Crect x=%2214%22 y=%2214%22 width=%2220%22 height=%2220%22 rx=%223%22 fill=%22none%22 stroke=%22%23d9a24b%22 stroke-width=%224%22/%3E%3Cpath d=%22M14 20 H34%22 stroke=%22%23d9a24b%22 stroke-width=%223%22/%3E%3C/svg%3E", "Бутылка с водой": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Crect x=%2214%22 y=%2214%22 width=%2220%22 height=%2220%22 rx=%223%22 fill=%22none%22 stroke=%22%23d9a24b%22 stroke-width=%224%22/%3E%3Cpath d=%22M14 20 H34%22 stroke=%22%23d9a24b%22 stroke-width=%223%22/%3E%3C/svg%3E", "Верёвка": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M10 34 L34 10 L38 14 L14 38 Z%22 fill=%22%23c98a4b%22/%3E%3Cpath d=%22M30 8 L40 18 L36 22 L26 12 Z%22 fill=%22%23c98a4b%22/%3E%3C/svg%3E", "Верёвка из тряпок": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Crect x=%228%22 y=%2220%22 width=%2232%22 height=%229%22 rx=%222%22 fill=%22%238f7a55%22/%3E%3Crect x=%228%22 y=%2230%22 width=%2232%22 height=%225%22 rx=%222%22 fill=%22%238f7a55%22 opacity=%220.6%22/%3E%3C/svg%3E", "Винтовка Мосина": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M10 34 L34 10 L38 14 L14 38 Z%22 fill=%22%23c98a4b%22/%3E%3Cpath d=%22M30 8 L40 18 L36 22 L26 12 Z%22 fill=%22%23c98a4b%22/%3E%3C/svg%3E", "Вода": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M14 34 L30 18 L34 22 L18 38 Z%22 fill=%22%23a9b47a%22/%3E%3Ccircle cx=%2233%22 cy=%2215%22 r=%226%22 fill=%22none%22 stroke=%22%23a9b47a%22 stroke-width=%224%22/%3E%3C/svg%3E", "Гвозди": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M24 10 L40 38 L8 38 Z%22 fill=%22none%22 stroke=%22%23a9834f%22 stroke-width=%225%22/%3E%3Cpath d=%22M24 10 L24 38%22 stroke=%22%23a9834f%22 stroke-width=%223%22/%3E%3C/svg%3E", "Гетры из шкуры": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M16 10 L32 10 L38 18 L34 22 L34 38 L14 38 L14 22 L10 18 Z%22 fill=%22%23b59060%22/%3E%3C/svg%3E", "Двустволка IZH-43": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M10 34 L34 10 L38 14 L14 38 Z%22 fill=%22%23c98a4b%22/%3E%3Cpath d=%22M30 8 L40 18 L36 22 L26 12 Z%22 fill=%22%23c98a4b%22/%3E%3C/svg%3E", "Дезинфицированные тряпки": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Crect x=%2216%22 y=%228%22 width=%2216%22 height=%2232%22 rx=%223%22 fill=%22%23c96a5a%22/%3E%3Crect x=%228%22 y=%2220%22 width=%2232%22 height=%228%22 rx=%222%22 fill=%22%23c96a5a%22/%3E%3C/svg%3E", "Длинная деревянная палка": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M10 34 L34 10 L38 14 L14 38 Z%22 fill=%22%23c98a4b%22/%3E%3Cpath d=%22M30 8 L40 18 L36 22 L26 12 Z%22 fill=%22%23c98a4b%22/%3E%3C/svg%3E", "Длинные деревянные палки": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M10 34 L34 10 L38 14 L14 38 Z%22 fill=%22%23c98a4b%22/%3E%3Cpath d=%22M30 8 L40 18 L36 22 L26 12 Z%22 fill=%22%23c98a4b%22/%3E%3C/svg%3E", "Доска": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Crect x=%2210%22 y=%2214%22 width=%2228%22 height=%2222%22 rx=%223%22 fill=%22none%22 stroke=%22%239a8a63%22 stroke-width=%224%22/%3E%3Cpath d=%22M10 22 H38%22 stroke=%22%239a8a63%22 stroke-width=%223%22/%3E%3C/svg%3E", "Доски": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Crect x=%228%22 y=%2220%22 width=%2232%22 height=%229%22 rx=%222%22 fill=%22%238f7a55%22/%3E%3Crect x=%228%22 y=%2230%22 width=%2232%22 height=%225%22 rx=%222%22 fill=%22%238f7a55%22 opacity=%220.6%22/%3E%3C/svg%3E", "Жгут": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Crect x=%2216%22 y=%228%22 width=%2216%22 height=%2232%22 rx=%223%22 fill=%22%23c96a5a%22/%3E%3Crect x=%228%22 y=%2220%22 width=%2232%22 height=%228%22 rx=%222%22 fill=%22%23c96a5a%22/%3E%3C/svg%3E", "Игла": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M14 34 L30 18 L34 22 L18 38 Z%22 fill=%22%23a9b47a%22/%3E%3Ccircle cx=%2233%22 cy=%2215%22 r=%226%22 fill=%22none%22 stroke=%22%23a9b47a%22 stroke-width=%224%22/%3E%3C/svg%3E", "Импровизированная могила": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Crect x=%2210%22 y=%2214%22 width=%2228%22 height=%2222%22 rx=%223%22 fill=%22none%22 stroke=%22%239a8a63%22 stroke-width=%224%22/%3E%3Cpath d=%22M10 22 H38%22 stroke=%22%239a8a63%22 stroke-width=%223%22/%3E%3C/svg%3E", "Импровизированная удочка": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M14 34 L30 18 L34 22 L18 38 Z%22 fill=%22%23a9b47a%22/%3E%3Ccircle cx=%2233%22 cy=%2215%22 r=%226%22 fill=%22none%22 stroke=%22%23a9b47a%22 stroke-width=%224%22/%3E%3C/svg%3E", "Импровизированный компас": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M14 34 L30 18 L34 22 L18 38 Z%22 fill=%22%23a9b47a%22/%3E%3Ccircle cx=%2233%22 cy=%2215%22 r=%226%22 fill=%22none%22 stroke=%22%23a9b47a%22 stroke-width=%224%22/%3E%3C/svg%3E", "Импровизированный лук": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M10 34 L34 10 L38 14 L14 38 Z%22 fill=%22%23c98a4b%22/%3E%3Cpath d=%22M30 8 L40 18 L36 22 L26 12 Z%22 fill=%22%23c98a4b%22/%3E%3C/svg%3E", "Импровизированный мешок": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Crect x=%2210%22 y=%2214%22 width=%2228%22 height=%2222%22 rx=%223%22 fill=%22none%22 stroke=%22%239a8a63%22 stroke-width=%224%22/%3E%3Cpath d=%22M10 22 H38%22 stroke=%22%239a8a63%22 stroke-width=%223%22/%3E%3C/svg%3E", "Каменный топор": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M10 34 L34 10 L38 14 L14 38 Z%22 fill=%22%23c98a4b%22/%3E%3Cpath d=%22M30 8 L40 18 L36 22 L26 12 Z%22 fill=%22%23c98a4b%22/%3E%3C/svg%3E", "Камень": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M10 34 L34 10 L38 14 L14 38 Z%22 fill=%22%23c98a4b%22/%3E%3Cpath d=%22M30 8 L40 18 L36 22 L26 12 Z%22 fill=%22%23c98a4b%22/%3E%3C/svg%3E", "Камин из поленьев": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M24 8 Q32 18 30 26 Q34 24 34 30 Q34 38 24 40 Q14 38 14 30 Q14 22 20 18 Q18 26 22 26 Q22 16 24 8 Z%22 fill=%22%23d97a3f%22/%3E%3C/svg%3E", "Картофель": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Crect x=%2214%22 y=%2214%22 width=%2220%22 height=%2220%22 rx=%223%22 fill=%22none%22 stroke=%22%23d9a24b%22 stroke-width=%224%22/%3E%3Cpath d=%22M14 20 H34%22 stroke=%22%23d9a24b%22 stroke-width=%223%22/%3E%3C/svg%3E", "Кастрюля": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Crect x=%2214%22 y=%2214%22 width=%2220%22 height=%2220%22 rx=%223%22 fill=%22none%22 stroke=%22%23d9a24b%22 stroke-width=%224%22/%3E%3Cpath d=%22M14 20 H34%22 stroke=%22%23d9a24b%22 stroke-width=%223%22/%3E%3C/svg%3E", "Кипячёная вода": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Crect x=%2214%22 y=%2214%22 width=%2220%22 height=%2220%22 rx=%223%22 fill=%22none%22 stroke=%22%23d9a24b%22 stroke-width=%224%22/%3E%3Cpath d=%22M14 20 H34%22 stroke=%22%23d9a24b%22 stroke-width=%223%22/%3E%3C/svg%3E", "Колчан": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M10 34 L34 10 L38 14 L14 38 Z%22 fill=%22%23c98a4b%22/%3E%3Cpath d=%22M30 8 L40 18 L36 22 L26 12 Z%22 fill=%22%23c98a4b%22/%3E%3C/svg%3E", "Колышки": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M24 10 L40 38 L8 38 Z%22 fill=%22none%22 stroke=%22%23a9834f%22 stroke-width=%225%22/%3E%3Cpath d=%22M24 10 L24 38%22 stroke=%22%23a9834f%22 stroke-width=%223%22/%3E%3C/svg%3E", "Консерва": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Crect x=%2214%22 y=%2214%22 width=%2220%22 height=%2220%22 rx=%223%22 fill=%22none%22 stroke=%22%23d9a24b%22 stroke-width=%224%22/%3E%3Cpath d=%22M14 20 H34%22 stroke=%22%23d9a24b%22 stroke-width=%223%22/%3E%3C/svg%3E", "Копьё": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M10 34 L34 10 L38 14 L14 38 Z%22 fill=%22%23c98a4b%22/%3E%3Cpath d=%22M30 8 L40 18 L36 22 L26 12 Z%22 fill=%22%23c98a4b%22/%3E%3C/svg%3E", "Кострище": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M24 8 Q32 18 30 26 Q34 24 34 30 Q34 38 24 40 Q14 38 14 30 Q14 22 20 18 Q18 26 22 26 Q22 16 24 8 Z%22 fill=%22%23d97a3f%22/%3E%3C/svg%3E", "Кость": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M14 34 L30 18 L34 22 L18 38 Z%22 fill=%22%23a9b47a%22/%3E%3Ccircle cx=%2233%22 cy=%2215%22 r=%226%22 fill=%22none%22 stroke=%22%23a9b47a%22 stroke-width=%224%22/%3E%3C/svg%3E", "Костяной нож": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M14 34 L30 18 L34 22 L18 38 Z%22 fill=%22%23a9b47a%22/%3E%3Ccircle cx=%2233%22 cy=%2215%22 r=%226%22 fill=%22none%22 stroke=%22%23a9b47a%22 stroke-width=%224%22/%3E%3C/svg%3E", "Крышка от банки": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M14 34 L30 18 L34 22 L18 38 Z%22 fill=%22%23a9b47a%22/%3E%3Ccircle cx=%2233%22 cy=%2215%22 r=%226%22 fill=%22none%22 stroke=%22%23a9b47a%22 stroke-width=%224%22/%3E%3C/svg%3E", "Крючок": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M14 34 L30 18 L34 22 L18 38 Z%22 fill=%22%23a9b47a%22/%3E%3Ccircle cx=%2233%22 cy=%2215%22 r=%226%22 fill=%22none%22 stroke=%22%23a9b47a%22 stroke-width=%224%22/%3E%3C/svg%3E", "Крючок из проволоки": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M14 34 L30 18 L34 22 L18 38 Z%22 fill=%22%23a9b47a%22/%3E%3Ccircle cx=%2233%22 cy=%2215%22 r=%226%22 fill=%22none%22 stroke=%22%23a9b47a%22 stroke-width=%224%22/%3E%3C/svg%3E", "Куртка из мешковины": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M16 10 L32 10 L38 18 L34 22 L34 38 L14 38 L14 22 L10 18 Z%22 fill=%22%23b59060%22/%3E%3C/svg%3E", "Кустарник": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Crect x=%228%22 y=%2220%22 width=%2232%22 height=%229%22 rx=%222%22 fill=%22%238f7a55%22/%3E%3Crect x=%228%22 y=%2230%22 width=%2232%22 height=%225%22 rx=%222%22 fill=%22%238f7a55%22 opacity=%220.6%22/%3E%3C/svg%3E", "Лопата": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Crect x=%2210%22 y=%2214%22 width=%2228%22 height=%2222%22 rx=%223%22 fill=%22none%22 stroke=%22%239a8a63%22 stroke-width=%224%22/%3E%3Cpath d=%22M10 22 H38%22 stroke=%22%239a8a63%22 stroke-width=%223%22/%3E%3C/svg%3E", "Любая одежда": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Crect x=%228%22 y=%2220%22 width=%2232%22 height=%229%22 rx=%222%22 fill=%22%238f7a55%22/%3E%3Crect x=%228%22 y=%2230%22 width=%2232%22 height=%225%22 rx=%222%22 fill=%22%238f7a55%22 opacity=%220.6%22/%3E%3C/svg%3E", "Магнит": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M14 34 L30 18 L34 22 L18 38 Z%22 fill=%22%23a9b47a%22/%3E%3Ccircle cx=%2233%22 cy=%2215%22 r=%226%22 fill=%22none%22 stroke=%22%23a9b47a%22 stroke-width=%224%22/%3E%3C/svg%3E", "Мешковина": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M16 10 L32 10 L38 18 L34 22 L34 38 L14 38 L14 22 L10 18 Z%22 fill=%22%23b59060%22/%3E%3C/svg%3E", "Мешковина из мешка": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Crect x=%228%22 y=%2220%22 width=%2232%22 height=%229%22 rx=%222%22 fill=%22%238f7a55%22/%3E%3Crect x=%228%22 y=%2230%22 width=%2232%22 height=%225%22 rx=%222%22 fill=%22%238f7a55%22 opacity=%220.6%22/%3E%3C/svg%3E", "Мешок": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Crect x=%228%22 y=%2220%22 width=%2232%22 height=%229%22 rx=%222%22 fill=%22%238f7a55%22/%3E%3Crect x=%228%22 y=%2230%22 width=%2232%22 height=%225%22 rx=%222%22 fill=%22%238f7a55%22 opacity=%220.6%22/%3E%3C/svg%3E", "Молоток": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M24 10 L40 38 L8 38 Z%22 fill=%22none%22 stroke=%22%23a9834f%22 stroke-width=%225%22/%3E%3Cpath d=%22M24 10 L24 38%22 stroke=%22%23a9834f%22 stroke-width=%223%22/%3E%3C/svg%3E", "Мука": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Crect x=%2214%22 y=%2214%22 width=%2220%22 height=%2220%22 rx=%223%22 fill=%22none%22 stroke=%22%23d9a24b%22 stroke-width=%224%22/%3E%3Cpath d=%22M14 20 H34%22 stroke=%22%23d9a24b%22 stroke-width=%223%22/%3E%3C/svg%3E", "Навес из брезента": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M24 10 L40 38 L8 38 Z%22 fill=%22none%22 stroke=%22%23a9834f%22 stroke-width=%225%22/%3E%3Cpath d=%22M24 10 L24 38%22 stroke=%22%23a9834f%22 stroke-width=%223%22/%3E%3C/svg%3E", "Нарезанное сырое мясо": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Crect x=%2214%22 y=%2214%22 width=%2220%22 height=%2220%22 rx=%223%22 fill=%22none%22 stroke=%22%23d9a24b%22 stroke-width=%224%22/%3E%3Cpath d=%22M14 20 H34%22 stroke=%22%23d9a24b%22 stroke-width=%223%22/%3E%3C/svg%3E", "Нож": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M10 34 L34 10 L38 14 L14 38 Z%22 fill=%22%23c98a4b%22/%3E%3Cpath d=%22M30 8 L40 18 L36 22 L26 12 Z%22 fill=%22%23c98a4b%22/%3E%3C/svg%3E", "Обрез IZH-43": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M10 34 L34 10 L38 14 L14 38 Z%22 fill=%22%23c98a4b%22/%3E%3Cpath d=%22M30 8 L40 18 L36 22 L26 12 Z%22 fill=%22%23c98a4b%22/%3E%3C/svg%3E", "Обрез Мосина": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M10 34 L34 10 L38 14 L14 38 Z%22 fill=%22%23c98a4b%22/%3E%3Cpath d=%22M30 8 L40 18 L36 22 L26 12 Z%22 fill=%22%23c98a4b%22/%3E%3C/svg%3E", "Огородный ящик": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M24 10 L40 38 L8 38 Z%22 fill=%22none%22 stroke=%22%23a9834f%22 stroke-width=%225%22/%3E%3Cpath d=%22M24 10 L24 38%22 stroke=%22%23a9834f%22 stroke-width=%223%22/%3E%3C/svg%3E", "Открытая консерва (ножом)": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Crect x=%2214%22 y=%2214%22 width=%2220%22 height=%2220%22 rx=%223%22 fill=%22none%22 stroke=%22%23d9a24b%22 stroke-width=%224%22/%3E%3Cpath d=%22M14 20 H34%22 stroke=%22%23d9a24b%22 stroke-width=%223%22/%3E%3C/svg%3E", "Открытая консерва (топором)": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Crect x=%2214%22 y=%2214%22 width=%2220%22 height=%2220%22 rx=%223%22 fill=%22none%22 stroke=%22%23d9a24b%22 stroke-width=%224%22/%3E%3Cpath d=%22M14 20 H34%22 stroke=%22%23d9a24b%22 stroke-width=%223%22/%3E%3C/svg%3E", "Палка": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M10 34 L34 10 L38 14 L14 38 Z%22 fill=%22%23c98a4b%22/%3E%3Cpath d=%22M30 8 L40 18 L36 22 L26 12 Z%22 fill=%22%23c98a4b%22/%3E%3C/svg%3E", "Палки": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Crect x=%228%22 y=%2220%22 width=%2232%22 height=%229%22 rx=%222%22 fill=%22%238f7a55%22/%3E%3Crect x=%228%22 y=%2230%22 width=%2232%22 height=%225%22 rx=%222%22 fill=%22%238f7a55%22 opacity=%220.6%22/%3E%3C/svg%3E", "Перчатки из шкуры": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M16 10 L32 10 L38 18 L34 22 L34 38 L14 38 L14 22 L10 18 Z%22 fill=%22%23b59060%22/%3E%3C/svg%3E", "Перья": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M10 34 L34 10 L38 14 L14 38 Z%22 fill=%22%23c98a4b%22/%3E%3Cpath d=%22M30 8 L40 18 L36 22 L26 12 Z%22 fill=%22%23c98a4b%22/%3E%3C/svg%3E", "Печёный картофель": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Crect x=%2214%22 y=%2214%22 width=%2220%22 height=%2220%22 rx=%223%22 fill=%22none%22 stroke=%22%23d9a24b%22 stroke-width=%224%22/%3E%3Cpath d=%22M14 20 H34%22 stroke=%22%23d9a24b%22 stroke-width=%223%22/%3E%3C/svg%3E", "Пила": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M10 34 L34 10 L38 14 L14 38 Z%22 fill=%22%23c98a4b%22/%3E%3Cpath d=%22M30 8 L40 18 L36 22 L26 12 Z%22 fill=%22%23c98a4b%22/%3E%3C/svg%3E", "Пластырь из скотча": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Crect x=%2216%22 y=%228%22 width=%2216%22 height=%2232%22 rx=%223%22 fill=%22%23c96a5a%22/%3E%3Crect x=%228%22 y=%2220%22 width=%2232%22 height=%228%22 rx=%222%22 fill=%22%23c96a5a%22/%3E%3C/svg%3E", "Плед из шкур": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Crect x=%2210%22 y=%2214%22 width=%2228%22 height=%2222%22 rx=%223%22 fill=%22none%22 stroke=%22%239a8a63%22 stroke-width=%224%22/%3E%3Cpath d=%22M10 22 H38%22 stroke=%22%239a8a63%22 stroke-width=%223%22/%3E%3C/svg%3E", "Плоскогубцы": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M14 34 L30 18 L34 22 L18 38 Z%22 fill=%22%23a9b47a%22/%3E%3Ccircle cx=%2233%22 cy=%2215%22 r=%226%22 fill=%22none%22 stroke=%22%23a9b47a%22 stroke-width=%224%22/%3E%3C/svg%3E", "Пробка от бутылки": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M14 34 L30 18 L34 22 L18 38 Z%22 fill=%22%23a9b47a%22/%3E%3Ccircle cx=%2233%22 cy=%2215%22 r=%226%22 fill=%22none%22 stroke=%22%23a9b47a%22 stroke-width=%224%22/%3E%3C/svg%3E", "Проволока": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M14 34 L30 18 L34 22 L18 38 Z%22 fill=%22%23a9b47a%22/%3E%3Ccircle cx=%2233%22 cy=%2215%22 r=%226%22 fill=%22none%22 stroke=%22%23a9b47a%22 stroke-width=%224%22/%3E%3C/svg%3E", "Пустая бутылка": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Crect x=%2214%22 y=%2214%22 width=%2220%22 height=%2220%22 rx=%223%22 fill=%22none%22 stroke=%22%23d9a24b%22 stroke-width=%224%22/%3E%3Cpath d=%22M14 20 H34%22 stroke=%22%23d9a24b%22 stroke-width=%223%22/%3E%3C/svg%3E", "Рюкзак из мешковины": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M16 10 L32 10 L38 18 L34 22 L34 38 L14 38 L14 22 L10 18 Z%22 fill=%22%23b59060%22/%3E%3C/svg%3E", "Рюкзак из шкуры": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M16 10 L32 10 L38 18 L34 22 L34 38 L14 38 L14 22 L10 18 Z%22 fill=%22%23b59060%22/%3E%3C/svg%3E", "Самодельная маска": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M16 10 L32 10 L38 18 L34 22 L34 38 L14 38 L14 22 L10 18 Z%22 fill=%22%23b59060%22/%3E%3C/svg%3E", "Самодельная повязка": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Crect x=%2216%22 y=%228%22 width=%2216%22 height=%2232%22 rx=%223%22 fill=%22%23c96a5a%22/%3E%3Crect x=%228%22 y=%2220%22 width=%2232%22 height=%228%22 rx=%222%22 fill=%22%23c96a5a%22/%3E%3C/svg%3E", "Самодельный нож": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M10 34 L34 10 L38 14 L14 38 Z%22 fill=%22%23c98a4b%22/%3E%3Cpath d=%22M30 8 L40 18 L36 22 L26 12 Z%22 fill=%22%23c98a4b%22/%3E%3C/svg%3E", "Силок": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M14 34 L30 18 L34 22 L18 38 Z%22 fill=%22%23a9b47a%22/%3E%3Ccircle cx=%2233%22 cy=%2215%22 r=%226%22 fill=%22none%22 stroke=%22%23a9b47a%22 stroke-width=%224%22/%3E%3C/svg%3E", "Скотч": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Crect x=%2216%22 y=%228%22 width=%2216%22 height=%2232%22 rx=%223%22 fill=%22%23c96a5a%22/%3E%3Crect x=%228%22 y=%2220%22 width=%2232%22 height=%228%22 rx=%222%22 fill=%22%23c96a5a%22/%3E%3C/svg%3E", "Соль": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Crect x=%2214%22 y=%2214%22 width=%2220%22 height=%2220%22 rx=%223%22 fill=%22none%22 stroke=%22%23d9a24b%22 stroke-width=%224%22/%3E%3Cpath d=%22M14 20 H34%22 stroke=%22%23d9a24b%22 stroke-width=%223%22/%3E%3C/svg%3E", "Спирт": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Crect x=%2216%22 y=%228%22 width=%2216%22 height=%2232%22 rx=%223%22 fill=%22%23c96a5a%22/%3E%3Crect x=%228%22 y=%2220%22 width=%2232%22 height=%228%22 rx=%222%22 fill=%22%23c96a5a%22/%3E%3C/svg%3E", "Спички": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M24 8 Q32 18 30 26 Q34 24 34 30 Q34 38 24 40 Q14 38 14 30 Q14 22 20 18 Q18 26 22 26 Q22 16 24 8 Z%22 fill=%22%23d97a3f%22/%3E%3C/svg%3E", "Стрелы (3 шт)": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M10 34 L34 10 L38 14 L14 38 Z%22 fill=%22%23c98a4b%22/%3E%3Cpath d=%22M30 8 L40 18 L36 22 L26 12 Z%22 fill=%22%23c98a4b%22/%3E%3C/svg%3E", "Сырое мясо": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Crect x=%2214%22 y=%2214%22 width=%2220%22 height=%2220%22 rx=%223%22 fill=%22none%22 stroke=%22%23d9a24b%22 stroke-width=%224%22/%3E%3Cpath d=%22M14 20 H34%22 stroke=%22%23d9a24b%22 stroke-width=%223%22/%3E%3C/svg%3E", "Табличка с надписью": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Crect x=%2210%22 y=%2214%22 width=%2228%22 height=%2222%22 rx=%223%22 fill=%22none%22 stroke=%22%239a8a63%22 stroke-width=%224%22/%3E%3Cpath d=%22M10 22 H38%22 stroke=%22%239a8a63%22 stroke-width=%223%22/%3E%3C/svg%3E", "Тесто": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Crect x=%2214%22 y=%2214%22 width=%2220%22 height=%2220%22 rx=%223%22 fill=%22none%22 stroke=%22%23d9a24b%22 stroke-width=%224%22/%3E%3Cpath d=%22M14 20 H34%22 stroke=%22%23d9a24b%22 stroke-width=%223%22/%3E%3C/svg%3E", "Топор": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Crect x=%2214%22 y=%2214%22 width=%2220%22 height=%2220%22 rx=%223%22 fill=%22none%22 stroke=%22%23d9a24b%22 stroke-width=%224%22/%3E%3Cpath d=%22M14 20 H34%22 stroke=%22%23d9a24b%22 stroke-width=%223%22/%3E%3C/svg%3E", "Тренога": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M24 8 Q32 18 30 26 Q34 24 34 30 Q34 38 24 40 Q14 38 14 30 Q14 22 20 18 Q18 26 22 26 Q22 16 24 8 Z%22 fill=%22%23d97a3f%22/%3E%3C/svg%3E", "Тряпки": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Crect x=%2216%22 y=%228%22 width=%2216%22 height=%2232%22 rx=%223%22 fill=%22%23c96a5a%22/%3E%3Crect x=%228%22 y=%2220%22 width=%2232%22 height=%228%22 rx=%222%22 fill=%22%23c96a5a%22/%3E%3C/svg%3E", "Тряпки из одежды": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Crect x=%228%22 y=%2220%22 width=%2232%22 height=%229%22 rx=%222%22 fill=%22%238f7a55%22/%3E%3Crect x=%228%22 y=%2230%22 width=%2232%22 height=%225%22 rx=%222%22 fill=%22%238f7a55%22 opacity=%220.6%22/%3E%3C/svg%3E", "Факел": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M24 8 Q32 18 30 26 Q34 24 34 30 Q34 38 24 40 Q14 38 14 30 Q14 22 20 18 Q18 26 22 26 Q22 16 24 8 Z%22 fill=%22%23d97a3f%22/%3E%3C/svg%3E", "Червяк": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M14 34 L30 18 L34 22 L18 38 Z%22 fill=%22%23a9b47a%22/%3E%3Ccircle cx=%2233%22 cy=%2215%22 r=%226%22 fill=%22none%22 stroke=%22%23a9b47a%22 stroke-width=%224%22/%3E%3C/svg%3E", "Шалаш": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M24 10 L40 38 L8 38 Z%22 fill=%22none%22 stroke=%22%23a9834f%22 stroke-width=%225%22/%3E%3Cpath d=%22M24 10 L24 38%22 stroke=%22%23a9834f%22 stroke-width=%223%22/%3E%3C/svg%3E", "Шашлык на палке": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Crect x=%2214%22 y=%2214%22 width=%2220%22 height=%2220%22 rx=%223%22 fill=%22none%22 stroke=%22%23d9a24b%22 stroke-width=%224%22/%3E%3Cpath d=%22M14 20 H34%22 stroke=%22%23d9a24b%22 stroke-width=%223%22/%3E%3C/svg%3E", "Шина": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Crect x=%2216%22 y=%228%22 width=%2216%22 height=%2232%22 rx=%223%22 fill=%22%23c96a5a%22/%3E%3Crect x=%228%22 y=%2220%22 width=%2232%22 height=%228%22 rx=%222%22 fill=%22%23c96a5a%22/%3E%3C/svg%3E", "Шкура": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M10 34 L34 10 L38 14 L14 38 Z%22 fill=%22%23c98a4b%22/%3E%3Cpath d=%22M30 8 L40 18 L36 22 L26 12 Z%22 fill=%22%23c98a4b%22/%3E%3C/svg%3E", "Ящик под снаряжение": "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect x=%222%22 y=%222%22 width=%2244%22 height=%2244%22 rx=%229%22 fill=%22%231b160f%22 stroke=%22%237a6a45%22 stroke-width=%222%22/%3E%3Cpath d=%22M24 10 L40 38 L8 38 Z%22 fill=%22none%22 stroke=%22%23a9834f%22 stroke-width=%225%22/%3E%3Cpath d=%22M24 10 L24 38%22 stroke=%22%23a9834f%22 stroke-width=%223%22/%3E%3C/svg%3E"};
+const EN={"Винтовка Мосина": "Mosin9130", "Пила": "Hacksaw", "Двустволка IZH-43": "IZH43Shotgun", "Длинная деревянная палка": "LongWoodenStick", "Длинные деревянные палки": "LongWoodenStick", "Верёвка": "Rope", "Нож": "KitchenKnife", "Перья": "ChickenFeather", "Шкура": "Pelt", "Камень": "SmallStone", "Проволока": "MetalWire", "Плоскогубцы": "Pliers", "Игла": "SewingNeedle", "Магнит": "Magnet", "Пробка от бутылки": "SmallCork", "Крышка от банки": "CanLid", "Вода": "Water", "Консерва": "BakedBeansCan", "Сырое мясо": "SteakMeat", "Картофель": "Potato", "Пустая бутылка": "EmptyBottle", "Бутылка с водой": "WaterBottle", "Кастрюля": "CookingPot", "Мука": "Flour", "Соль": "Salt", "Тряпки": "Rags", "Спирт": "AlcoholTincture", "Скотч": "DuctTape", "Мешковина": "BurlapSack", "Бревно": "Log", "Брёвна": "Log", "Топор": "SplittingAxe", "Спички": "Matchbox", "Брезент": "Tarp", "Доски": "WoodenPlank", "Гвозди": "Nails", "Молоток": "Hammer", "Палки": "WoodenStick", "Мешок": "Sack", "Лопата": "Shovel", "Кость": "SmallBone", "Червяк": "Earthworm", "Крючок": "FishingHook", "Кустарник": "WoodenStick", "Любая одежда": "Shirt", "Бревно x1": "Brevnox1", "Брезент x1": "Brezentx1", "Брёвна x2": "Brevnax2", "Брёвна x5": "Brevnax5", "Бутылка воды из колодца": "Butylkavodyizkolodca", "Бутылка с водой x1": "Butylkasvodoyx1", "Верёвка x1": "Verevkax1", "Верёвка из тряпок": "Verevkaiztryapok", "Винтовка Мосина x1": "Vintovkamosinax1", "Вода x1": "Vodax1", "Гвозди x2": "Gvozdix2", "Гетры из шкуры": "Getryizshkury", "Двустволка IZH-43 x1": "Dvustvolkaizh43x1", "Дезинфицированные тряпки": "Dezinficirovannyetryapki", "Длинная деревянная палка x1": "Dlinnayaderevyannayapalk", "Длинные деревянные палки x3": "Dlinnyederevyannyepalkix", "Доска x1": "Doskax1", "Доски x2": "Doskix2", "Доски x4": "Doskix4", "Жгут": "Zhgut", "Игла x1": "Iglax1", "Импровизированная могила": "Improvizirovannayamogila", "Импровизированная удочка": "Improvizirovannayaudochk", "Импровизированный компас": "Improvizirovannyykompas", "Импровизированный лук": "Improvizirovannyyluk", "Импровизированный мешок": "Improvizirovannyymeshok", "Каменный топор": "Kamennyytopor", "Камень x1": "Kamenx1", "Камин из поленьев": "Kaminizpolenev", "Картофель x1": "Kartofelx1", "Кастрюля x1": "Kastryulyax1", "Кипячёная вода": "Kipyachenayavoda", "Колчан": "Kolchan", "Колышки": "Kolyshki", "Консерва x1": "Konservax1", "Копьё": "Kope", "Кострище": "Kostrische", "Кость x1": "Kostx1", "Костяной нож": "Kostyanoynozh", "Крышка от банки x1": "Kryshkaotbankix1", "Крючок x1": "Kryuchokx1", "Крючок из проволоки": "Kryuchokizprovoloki", "Куртка из мешковины": "Kurtkaizmeshkoviny", "Кустарник x1": "Kustarnikx1", "Лопата x1": "Lopatax1", "Любая одежда x1": "Lyubayaodezhdax1", "Магнит x1": "Magnitx1", "Мешковина x2": "Meshkovinax2", "Мешковина x3": "Meshkovinax3", "Мешковина из мешка": "Meshkovinaizmeshka", "Мешок x1": "Meshokx1", "Молоток x1": "Molotokx1", "Мука x1": "Mukax1", "Навес из брезента": "Navesizbrezenta", "Нарезанное сырое мясо": "Narezannoesyroemyaso", "Нож x1": "Nozhx1", "Обрез IZH-43": "Obrezizh43", "Обрез Мосина": "Obrezmosina", "Огородный ящик": "Ogorodnyyyaschik", "Открытая консерва (ножом)": "Otkrytayakonservanozhom", "Открытая консерва (топором)": "Otkrytayakonservatoporom", "Палка x1": "Palkax1", "Палка x2": "Palkax2", "Палки x2": "Palkix2", "Палки x3": "Palkix3", "Палки x4": "Palkix4", "Перчатки из шкуры": "Perchatkiizshkury", "Перья x3": "Peryax3", "Печёный картофель": "Pechenyykartofel", "Пила x1": "Pilax1", "Пластырь из скотча": "Plastyrizskotcha", "Плед из шкур": "Pledizshkur", "Плоскогубцы x1": "Ploskogubcyx1", "Пробка от бутылки x1": "Probkaotbutylkix1", "Проволока x1": "Provolokax1", "Пустая бутылка x1": "Pustayabutylkax1", "Рюкзак из мешковины": "Ryukzakizmeshkoviny", "Рюкзак из шкуры": "Ryukzakizshkury", "Самодельная маска": "Samodelnayamaska", "Самодельная повязка": "Samodelnayapovyazka", "Самодельный нож": "Samodelnyynozh", "Силок": "Silok", "Скотч x1": "Skotchx1", "Соль x1": "Solx1", "Спирт x1": "Spirtx1", "Спички x1": "Spichkix1", "Стрелы (3 шт)": "Strely3sht", "Сырое мясо x1": "Syroemyasox1", "Табличка с надписью": "Tablichkasnadpisyu", "Тесто": "Testo", "Топор x1": "Toporx1", "Тренога": "Trenoga", "Тряпки x1": "Tryapkix1", "Тряпки x2": "Tryapkix2", "Тряпки из одежды": "Tryapkiizodezhdy", "Факел": "Fakel", "Червяк x1": "Chervyakx1", "Шалаш": "Shalash", "Шашлык на палке": "Shashlyknapalke", "Шина": "Shina", "Шкура x1": "Shkurax1", "Шкура x2": "Shkurax2", "Шкура x3": "Shkurax3", "Ящик под снаряжение": "Yaschikpodsnaryazhenie", "Доска": "Doska", "Палка": "Palka"};
+const CATS=[];
+RECIPES.forEach(function(r){ if(CATS.indexOf(r.c)<0) CATS.push(r.c); });
+var admin=false, curCat='Все', query='', pctx=null, ectx=null;
+
+/* ---------- защищённые обращения к DOM ---------- */
+function st(id,t){ var el=document.getElementById(id); if(el) el.textContent=t; }
+function si(id,h){ var el=document.getElementById(id); if(el) el.innerHTML=h; }
+function show(id,on){ var el=document.getElementById(id); if(el) el.classList.toggle('hidden',!on); }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function showErr(e){ show('errBar',true); st('errBar','Ошибка скрипта: '+e); }
+
+/* ---------- хранилище ---------- */
+function LSG(k,d){ try{ var v=localStorage.getItem(k); return v?JSON.parse(v):d; }catch(e){ return d; } }
+function LSS(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
+var edits=LSG('zw_edits',{}), mods=LSG('zw_mods',[]), photos=LSG('zw_photos',{}), iphotos=LSG('zw_iphotos',{});
+
+/* ---------- модели ---------- */
+function allRecipes(){ return RECIPES.concat(mods); }
+function eff(n){
+  var r=null;
+  for(var i=0;i<mods.length;i++) if(mods[i].n===n) r=mods[i];
+  if(!r) for(var j=0;j<RECIPES.length;j++) if(RECIPES[j].n===n) r=RECIPES[j];
+  if(r && edits[n]) r=Object.assign({},r,edits[n]);
+  return r;
+}
+function isMod(n){ for(var i=0;i<mods.length;i++) if(mods[i].n===n) return true; return false; }
+function isEd(n){ return !!edits[n]; }
+function parseIng(lines){
+  var out=[];
+  lines.split('\n').forEach(function(l){
+    l=l.trim(); if(!l) return;
+    var m=l.match(/^(.*?)\s*[xX×]\s*(\d+)$/);
+    out.push(m?{n:m[1].trim(),q:parseInt(m[2],10)}:{n:l,q:1});
+  });
+  return out;
+}
+function fmtIng(a){ return a.map(function(x){ return x.q>1? x.n+' x'+x.q : x.n; }); }
+function ingLine(a){
+  return a.map(function(x,i){
+    var key=ectx? ectx+'|'+i : null;
+    var ph=key&&iphotos[key]? iphotos[key] : null;
+    var img=ph? '<img src="'+ph+'" referrerpolicy="no-referrer" alt="">' : (ICONS[x.n]? '<img src="'+ICONS[x.n]+'" alt="">':'');
+    return '<span class="ing">'+img+esc(x.n)+(x.q>1?' — x'+x.q:'')+(admin?'<button class="ip" data-act="ingphoto" data-i="'+i+'">📷</button>':'')+'</span>';
+  }).join('');
+}
+
+/* ---------- отрисовка ---------- */
+function renderTabs(){
+  var h='<button class="tab on" data-act="tab" data-cat="Все">Все</button>';
+  CATS.forEach(function(c){ h+='<button class="tab" data-act="tab" data-cat="'+esc(c)+'">'+esc(c)+'</button>'; });
+  si('tabs',h);
+}
+function render(){
+  var list=allRecipes().filter(function(r){
+    if(curCat!=='Все'&&r.c!==curCat) return false;
+    if(!query) return true;
+    var hay=(r.n+' '+r.c+' '+r.i.join(' ')+' '+(r.t||[]).join(' ')+' '+(r.note||'')).toLowerCase();
+    return hay.indexOf(query)>=0;
+  });
+  var h=list.map(function(r){
+    var ph=photos[r.n];
+    var img=ph? ph : ICONS[r.n]||'';
+    return '<div class="card" data-act="open" data-name="'+esc(r.n)+'">'
+      +'<div class="cimg" style="background-image:url(\''+img+'\')"></div>'
+      +'<div class="cbody"><h3>'+esc(r.n)+'</h3><div class="ccat">'+esc(r.c)+'</div>'
+      +'<div class="ctags">'+(isMod(r.n)?'<span class="tag mod">мод</span>':'')+(isEd(r.n)?'<span class="tag ed">изм.</span>':'')+'</div></div>'
+      +(admin?'<button class="mini adm-only" data-act="editcard" data-name="'+esc(r.n)+'">✏️</button>':'')
+      +'</div>';
+  }).join('');
+  si('grid',h);
+  show('empty', list.length===0);
+  st('cnt', String(allRecipes().length));
+}
+
+/* ---------- модалка рецепта ---------- */
+function openCard(n){
+  var r=eff(n); if(!r) return;
+  ectx=n;
+  st('mTitle',r.n); st('mCat',r.c);
+  var ph=photos[r.n], img=ph||ICONS[r.n]||'';
+  si('mImg',''); document.getElementById('mImg').style.backgroundImage="url('"+img+"')";
+  si('mIng', ingLine(r.i));
+  st('mTools', (r.t&&r.t.length)? r.t.join(', ') : '—');
+  st('mNote', r.note||'');
+  show('mModal',true);
+}
+
+/* ---------- фото ---------- */
+function openPhoto(mode,i){
+  pctx={mode:mode,i:i};
+  st('phWho', mode==='rec'? ('Рецепт: '+ectx) : ('Ингредиент: '+eff(ectx).i[i].n));
+  st('phIn', mode==='rec'? (photos[ectx]||'') : (iphotos[ectx+'|'+i]||''));
+  si('phPrev',''); si('phStatus','');
+  document.getElementById('phPrev').style.backgroundImage='none';
+  show('pModal',true); preview();
+}
+function preview(){
+  var u=document.getElementById('phIn').value.trim(), s=document.getElementById('phStatus'), p=document.getElementById('phPrev');
+  if(!u){ si('phStatus',''); p.style.backgroundImage='none'; return; }
+  if(!/\.(jpe?g|png|webp|gif|svg)(\?|$)/i.test(u)){ si('phStatus','Похоже, ссылка не на файл картинки. Нужна прямая ссылка (правый клик по картинке → «Копировать URL изображения»).'); p.style.backgroundImage='none'; return; }
+  var img=new Image(); img.referrerPolicy='no-referrer';
+  img.onload=function(){ s.textContent='Картинка открывается — можно закреплять.'; s.className='ok'; p.style.backgroundImage="url('"+u+"')"; };
+  img.onerror=function(){ s.textContent='Ссылка не открывается. Проверьте адрес или используйте файл с компьютера.'; s.className='bad'; p.style.backgroundImage='none'; };
+  img.src=u;
+}
+function bindPhoto(){
+  var u=document.getElementById('phIn').value.trim();
+  if(!u||!pctx) return;
+  if(pctx.mode==='rec') photos[ectx]=u; else iphotos[ectx+'|'+pctx.i]=u;
+  LSS('zw_photos',photos); LSS('zw_iphotos',iphotos);
+  closeModals(); render(); if(document.getElementById('mModal').classList.contains('hidden')===false) openCard(ectx);
+}
+function unbindPhoto(){
+  if(!pctx) return;
+  if(pctx.mode==='rec') delete photos[ectx]; else delete iphotos[ectx+'|'+pctx.i];
+  LSS('zw_photos',photos); LSS('zw_iphotos',iphotos);
+  closeModals(); render();
+}
+function checkPhotos(){
+  var all=[]; for(var k in photos) all.push(['рецепт «'+k+'»',photos[k]]);
+  for(var k2 in iphotos) all.push(['ингредиент ('+k2.replace('|',' / ')+')',iphotos[k2]]);
+  if(!all.length){ st('status','Свои фото пока не привязаны.'); return; }
+  var ok=0, bad=[], done=0;
+  all.forEach(function(pair){
+    var im=new Image(); im.referrerPolicy='no-referrer';
+    im.onload=function(){ ok++; tick(); };
+    im.onerror=function(){ bad.push(pair[0]); tick(); };
+    im.src=pair[1];
+  });
+  function tick(){ done++; if(done===all.length) st('status','Проверено '+all.length+': открывается '+ok+', не открывается '+bad.length+(bad.length?' → '+bad.join('; '):'')); }
+}
+
+/* ---------- админка ---------- */
+function setAdmin(on){
+  admin=on; document.body.classList.toggle('adm',on);
+  show('loginBox',!on); show('admPanels',on);
+  LSS('zw_admin',on);
+  render();
+}
+function login(){
+  var pw=document.getElementById('pwIn').value;
+  if(pw==='kbr9131'){ setAdmin(true); } else { showErr('Неверный пароль.'); }
+}
+function logout(){ setAdmin(false); }
+
+/* ---------- добавление и редактирование ---------- */
+function addSave(){
+  var n=document.getElementById('nmIn').value.trim();
+  var c=document.getElementById('catSel').value;
+  var ing=parseIng(document.getElementById('ingTa').value);
+  var t=document.getElementById('toolsIn').value.split(',').map(function(s){return s.trim();}).filter(Boolean);
+  var note=document.getElementById('noteTa').value.trim();
+  if(!n||!ing.length){ showErr('Заполните название и хотя бы один ингредиент.'); return; }
+  mods.push({n:n,c:c,i:ing,t:t,note:note}); LSS('zw_mods',mods);
+  document.getElementById('nmIn').value=''; document.getElementById('ingTa').value='';
+  document.getElementById('toolsIn').value=''; document.getElementById('noteTa').value='';
+  st('status','Рецепт «'+n+'» добавлен.'); render();
+}
+function delLast(){
+  if(!mods.length){ showErr('Мод-рецептов пока нет.'); return; }
+  var last=mods.pop(); LSS('zw_mods',mods); render();
+  st('status','Удалён рецепт «'+last.n+'».');
+}
+function openEdit(n){
+  ectx=n; var r=eff(n); if(!r) return;
+  document.getElementById('eName').value=r.n;
+  var sel=document.getElementById('eCat'); sel.innerHTML='';
+  CATS.forEach(function(c){ var o=document.createElement('option'); o.value=c; o.textContent=c; if(c===r.c)o.selected=true; sel.appendChild(o); });
+  document.getElementById('eIng').value=fmtIng(r.i).join('\n');
+  document.getElementById('eTools').value=(r.t||[]).join(', ');
+  document.getElementById('eNote').value=r.note||'';
+  show('eModal',true);
+}
+function saveEdit(){
+  var nn=document.getElementById('eName').value.trim();
+  var ing=parseIng(document.getElementById('eIng').value);
+  if(!nn||!ing.length){ showErr('Заполните название и ингредиенты.'); return; }
+  var upd={n:nn,c:document.getElementById('eCat').value,i:ing,
+           t:document.getElementById('eTools').value.split(',').map(function(s){return s.trim();}).filter(Boolean),
+           note:document.getElementById('eNote').value.trim()};
+  if(ectx!==nn){
+    if(photos[ectx]){ photos[nn]=photos[ectx]; delete photos[ectx]; }
+    for(var k in iphotos){ if(k.indexOf(ectx+'|')===0){ iphotos[nn+k.slice(ectx.length)]=iphotos[k]; delete iphotos[k]; } }
+    LSS('zw_photos',photos); LSS('zw_iphotos',iphotos);
+  }
+  edits[ectx]=upd; delete edits._tmp; LSS('zw_edits',edits);
+  closeModals(); render(); st('status','Рецепт обновлён: «'+nn+'».');
+  ectx=nn;
+}
+
+/* ---------- массовая привязка, копия ---------- */
+function applyMass(){
+  var ta=document.getElementById('massTa').value.split('\n'), applied=0, missed=[];
+  ta.forEach(function(l){
+    var m=l.split('=');
+    if(m.length<2) return;
+    var n=m[0].trim(), u=m.slice(1).join('=').trim();
+    if(!n||!u) return;
+    if(eff(n)){ photos[n]=u; applied++; } else missed.push(n);
+  });
+  LSS('zw_photos',photos); render();
+  st('status','Привязано: '+applied+'. Не найдено рецептов: '+(missed.length?missed.join('; '):'нет')+'.');
+}
+function clearPhotos(){
+  photos={}; iphotos={}; LSS('zw_photos',photos); LSS('zw_iphotos',iphotos);
+  render(); st('status','Все свои фото убраны.');
+}
+function doExport(){
+  var blob=new Blob([JSON.stringify({VER:VER,edits:edits,mods:mods,photos:photos,iphotos:iphotos},null,2)],{type:'application/json'});
+  var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='stanz_wiki_backup.json'; a.click();
+  st('status','Экспорт сохранён.');
+}
+function doImport(){
+  var f=document.getElementById('fileImp'); f.value=''; f.click();
+}
+function onImpFile(ev){
+  var fr=new FileReader();
+  fr.onload=function(){
+    try{
+      var j=JSON.parse(fr.result);
+      if(j.edits){edits=j.edits;} if(j.mods){mods=j.mods;} if(j.photos){photos=j.photos;} if(j.iphotos){iphotos=j.iphotos;}
+      LSS('zw_edits',edits); LSS('zw_mods',mods); LSS('zw_photos',photos); LSS('zw_iphotos',iphotos);
+      render(); st('status','Импорт выполнен.');
+    }catch(e){ showErr('Не удалось прочитать JSON: '+e); }
+  };
+  fr.readAsText(ev.target.files[0]);
+}
+
+/* ---------- модалки, действия ---------- */
+function closeModals(){ show('mModal',false); show('pModal',false); show('eModal',false); }
+var ACTIONS={
+  tab:function(b){ curCat=b.getAttribute('data-cat');
+    document.querySelectorAll('#tabs .tab').forEach(function(t){ t.classList.toggle('on', t.getAttribute('data-cat')===curCat); });
+    render(); },
+  open:function(b){ openCard(b.getAttribute('data-name')); },
+  closemodal:function(){ closeModals(); },
+  login:function(){ login(); },
+  logout:function(){ logout(); },
+  addsave:function(){ addSave(); },
+  dellast:function(){ delLast(); },
+  apply:function(){ applyMass(); },
+  checkphotos:function(){ checkPhotos(); },
+  clearphotos:function(){ clearPhotos(); },
+  export:function(){ doExport(); },
+  import:function(){ doImport(); },
+  photo:function(b){ openPhoto('rec',0); },
+  ingphoto:function(b){ openPhoto('ing', parseInt(b.getAttribute('data-i'),10)); },
+  photorec:function(){ openPhoto('rec',0); },
+  editcard:function(b){ openEdit(b.getAttribute('data-name')); },
+  editrec:function(){ openEdit(ectx); },
+  delrec:function(){ delRec(ectx); },
+  saveedit:function(){ saveEdit(); },
+  checklink:function(){ preview(); },
+  bind:function(){ bindPhoto(); },
+  unbind:function(){ unbindPhoto(); },
+  pickfile:function(){ document.getElementById('filePick').click(); }
+};
+function delRec(n){
+  if(isMod(n)){ mods=mods.filter(function(m){return m.n!==n;}); LSS('zw_mods',mods); }
+  else { edits[n]={deleted:true}; LSS('zw_edits',edits); }
+  closeModals(); render(); st('status','Рецепт «'+n+'» удалён.');
+}
+
+/* ---------- фон: верблюды, песок ---------- */
+function initBg(){
+  var layer=document.getElementById('camelLayer');
+  if(layer){
+    var cam='<img src="data:image/png;base64,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" alt="">';
+    var conf=[[18,'86s','normal','0.85',70],[40,'64s','reverse','0.7',58],[62,'100s','normal','0.6',50],[84,'76s','reverse','0.75',62]];
+    conf.forEach(function(c){
+      var div=document.createElement('div'); div.className='cam';
+      div.style.animationDuration=c[1]; div.style.animationDelay='-'+c[0]+'s';
+      if(c[2]==='reverse') div.style.animationName='walkrev';
+      if(c[2]==='normal') div.classList.add('flip');
+      div.style.opacity=c[3]; div.style.width=c[4]+'px';
+      div.innerHTML=cam; layer.appendChild(div);
+    });
+  }
+  var sand=document.getElementById('sandLayer');
+  if(sand){
+    for(var i=0;i<40;i++){
+      var s=document.createElement('span'); s.className='sand';
+      var sz=(1.5+Math.random()*3).toFixed(1)+'px';
+      s.style.width=sz; s.style.height=sz;
+      s.style.left=(Math.random()*105).toFixed(1)+'%';
+      s.style.animationDuration=(9+Math.random()*14).toFixed(1)+'s';
+      s.style.animationDelay='-'+(Math.random()*14).toFixed(1)+'s';
+      sand.appendChild(s);
+    }
+  }
+}
+
+/* ---------- единый обработчик ---------- */
+document.addEventListener('click',function(e){
+  var b=e.target.closest('[data-act]'); if(!b) return;
+  var act=b.getAttribute('data-act');
+  try{ if(ACTIONS[act]) ACTIONS[act](b); }catch(err){ showErr(err); }
+});
+document.addEventListener('input',function(e){
+  if(e.target.id==='searchIn'){ query=e.target.value.trim().toLowerCase(); render(); }
+  if(e.target.id==='phIn'){ try{ preview(); }catch(err){ showErr(err); } }
+});
+document.addEventListener('change',function(e){
+  if(e.target.id==='filePick'){
+    var f=e.target.files[0]; if(!f) return;
+    var fr=new FileReader();
+    fr.onload=function(){
+      var u=fr.result;
+      if(pctx){ if(pctx.mode==='rec') photos[ectx]=u; else iphotos[ectx+'|'+pctx.i]=u;
+        LSS('zw_photos',photos); LSS('zw_iphotos',iphotos); closeModals(); render(); openCard(ectx); }
+    };
+    fr.readAsDataURL(f); e.target.value='';
+  }
+  if(e.target.id==='fileImp') onImpFile(e);
+});
+window.addEventListener('error',function(ev){ try{ showErr(ev.message||'неизвестная ошибка'); }catch(e){} });
+
+/* ---------- инициализация — строго в конце ---------- */
+function init(){
+  renderTabs();
+  var s1=document.getElementById('catSel');
+  CATS.forEach(function(c){ var o=document.createElement('option'); o.value=c; o.textContent=c; s1.appendChild(o); });
+  st('cnt', String(allRecipes().length));
+  st('verFoot', VER);
+  st('verTop', VER);
+  if(LSG('zw_admin',false)) setAdmin(true);
+  render(); initBg();
+}
+try{ init(); }catch(e){ showErr(e); }
+
+</script>
+</body>
+</html>
